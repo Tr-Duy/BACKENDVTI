@@ -6,7 +6,11 @@ import com.vti.lesson1.form.PostUpdateForm;
 import com.vti.lesson1.mapper.PostMapper;
 import com.vti.lesson1.repository.PostRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
@@ -17,15 +21,13 @@ public class PostServiceImpl implements PostService {
 
     private PostRepository postRepository;     //tangaf service phai co 1 doi tuong o tang repository
 
-    // chuc nang fileAll
+    // chuc nang fillall
     @Override
-    public List<PostDto> findAll() { // // Lấy toàn bộ bài viết từ database Kết quả: List<Post> = [Post1, Post2, Post3, ...]
-        return postRepository.findAll()
-                .stream()// Chuyển List thành "băng chuyền" để xử lý từng phần tử
-                .map(PostMapper::map)// // Với mỗi Post → chạy hàm PostMapper.map() → ra PostDto
-                .toList(); // Gom tất cả PostDto lại thành 1 List
+    public Page<PostDto> findAll(Pageable pageable) { // // Lấy toàn bộ bài viết từ database Kết quả: List<Post> = [Post1, Post2, Post3, ...]
+        return postRepository.findAll(pageable)
+                .map(PostMapper::map);  // Với mỗi Post(entity) → chạy hàm PostMapper.map() → ra PostDto
     }
-    // filebyid tra ve 1 doi tuong
+    // findbyid tra ve 1 doi tuong
     @Override
     public PostDto findById(long id) {
         return postRepository.findById(id) // Tìm bài viết theo ID
@@ -33,6 +35,7 @@ public class PostServiceImpl implements PostService {
                 .orElse(null); // Nếu không tìm thấy thì trả về null
     }
     //create
+    @ResponseStatus(HttpStatus.CREATED) // tra ve http status la 201 khi tao moi thanh cong
     @Override
     public PostDto create(PostCreateForm form) { // dau vao form dau ra dto
         var post = PostMapper.map(form); // Dùng mapper để chuyển PostDto → Post
@@ -52,6 +55,7 @@ public class PostServiceImpl implements PostService {
         return PostMapper.map(savePost); // Trả về PostDto đã được cập nhật
     }
     //delete
+    @ResponseStatus(HttpStatus.NO_CONTENT) // neu xoa k co du lieu se bao ve loi 204
     @Override
     public void deleteById(long id) {
         postRepository.deleteById(id);
