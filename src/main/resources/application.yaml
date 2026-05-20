@@ -12,17 +12,17 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        auto_quote_keyword: true
-    defer-datasource-initialization: true
+        auto_quote_keyword: true #cau hinh ben hibernate , cac tu khoa sql thi se tu dong them dau ``
+    defer-datasource-initialization: true #khoi tao du lieu
   sql:
     initiation:
-      mode: always
+      mode: always #luon luon khoi tao , khi nao chay server thi se khoi tao
   data:
     web:
       pageable:
-        default-page-size: 10
-        one-indexed-parameter: true
-        page-parameter: page
-        size-parameter: size
+        default-page-size: 10 #cau hinh so page mac dinh la 10
+        one-indexed-parameter: true #mac dinh chi so nhu mang , trang dau tien la trang 1
+        page-parameter: page #cau hinh key de server biet trang bao nhieu
+        size-parameter: size #kich thuoc 1 trang
       sort:
-        sort-parameter: sort
+        sort-parameter: sort #sap xep cua trang
