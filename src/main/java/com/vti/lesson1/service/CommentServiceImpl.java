@@ -7,6 +7,7 @@ import com.vti.lesson1.form.CommentUpdateForm;
 import com.vti.lesson1.mapper.CommentMappper;
 import com.vti.lesson1.mapper.PostMapper;
 import com.vti.lesson1.repository.CommentRepository;
+import com.vti.lesson1.repository.PostRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -20,8 +21,9 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
-    private CommentRepository commentRepository;
+    private CommentRepository commentRepository;//truy cap vao commentrepository de lay ra bai viet
     private ModelMapper modelMapper;
+    private PostRepository postRepository;//muon kiem tra post ton tai hay khong phai truy cap vao repository cua bai viet
 
     //findlall
     @Override
@@ -36,11 +38,23 @@ public class CommentServiceImpl implements CommentService {
                 .map(comment -> modelMapper.map(comment, CommentDto.class))
                 .orElse(null);
     }
+    @Override
+    public Page<CommentDto> findAllByPostId(Long postId, Pageable pageable) {
+        return commentRepository.findAllByPostId(postId, pageable)
+                .map(comment -> modelMapper.map(comment, CommentDto.class));
+    }
+
     //create
 
     @Override
-    public CommentDto create(CommentCreateForm form){
+    public CommentDto create(CommentCreateForm form, Long postId){
+        var optional = postRepository.findById(postId);//kiem tra bai viet co ton tai hay k
+        if (optional.isEmpty()) {
+            return null;
+        }
+        var post = optional.get(); //neu ton tai thi lay ra bai viet
         var comment = modelMapper.map(form, Comment.class);
+        comment.setPost(post);//set thong tin comment thuoc ve bai viet nay
         var saveComment = commentRepository.save(comment);
         return modelMapper.map(saveComment, CommentDto.class);
     }

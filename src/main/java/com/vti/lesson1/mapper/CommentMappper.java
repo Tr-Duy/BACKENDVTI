@@ -19,7 +19,7 @@ public class CommentMappper {
     }
     //anh xa tu create sang entity
     public static Comment map(CommentCreateForm form){
-        var comment = new Comment();
+        var comment = new Comment(); // khi ma tao 1 form comment thi se lay ten email va noi dung
         comment.setName(form.getName());
         comment.setEmail(form.getEmail());
         comment.setBody(form.getBody());

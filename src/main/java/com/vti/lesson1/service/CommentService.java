@@ -15,7 +15,11 @@ public interface CommentService {
     //findbyid
     CommentDto findById(long id);
 
-    CommentDto create(CommentCreateForm form);
+    Page<CommentDto> findAllByPostId(Long postId, Pageable pageable);
+
+
+    //create
+    CommentDto create(CommentCreateForm form, Long postId);
 
     //update
     CommentDto update(CommentUpdateForm form, long id);

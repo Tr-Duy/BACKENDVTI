@@ -26,11 +26,18 @@ public class CommentController {
 
         return commentService.findById(id);
     }
-    @ResponseStatus(HttpStatus.CREATED)// tra ve 201 neu tao moi thanh cong
-    @PostMapping("/api/v1/comments")
-    public CommentDto create(@RequestBody CommentCreateForm form){
+    @GetMapping("/api/v1/posts/{postId}/comments")
+    public Page<CommentDto> findAllByPostId(@PathVariable("postId") Long postId, Pageable pageable) {
+        return commentService.findAllByPostId(postId, pageable);
+    }
 
-        return commentService.create(form);
+    @ResponseStatus(HttpStatus.CREATED)// tra ve 201 neu tao moi thanh cong
+    @PostMapping("/api/v1/posts/{postId}/comments") //trong ds bai viet se di vao bai viet co id .. sau do di vao danh sach comment
+    public CommentDto create(@RequestBody CommentCreateForm form,
+                             @PathVariable("postId")  Long postId) //lay postId tren duong dan
+    {
+
+        return commentService.create(form, postId);
     }
     @PutMapping("/api/v1/comments/{id}")
     public CommentDto update(@PathVariable("id") long id, @RequestBody CommentUpdateForm form){ // restsponsbody la day du lieu len

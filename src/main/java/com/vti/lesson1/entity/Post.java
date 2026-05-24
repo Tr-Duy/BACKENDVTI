@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -34,4 +35,8 @@ public class Post {
     @Column( name = "updated_at", nullable = false)
     @UpdateTimestamp     // lay tg hien tai khi update bai viet
     private  LocalDateTime updatedAt;
+
+    //comment da có thông tin ve bài post thi gio post cũng phải có thông tin về comment
+    @OneToMany (mappedBy = "post")// 1 post  co nhieu comment , mappedBy để tên theo bên comment
+    private List<Comment> comments;     // 1 bài post phải có nhiều comment nên sử dụng List , comments để số nhiều
 }
