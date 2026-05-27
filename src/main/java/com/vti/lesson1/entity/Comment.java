@@ -40,8 +40,8 @@ public class Comment {
     private LocalDateTime updateAt;
 
     @ManyToOne // nhieu comment thuoc 1 bai post
-    @JoinColumn(name = "post_id", nullable = false, referencedColumnName = "id")
-
+    @JoinColumn(name = "post_id", nullable = false, referencedColumnName = "id") // tao ra cot trung gian tuc la khoa ngoai thi su dung JoinColumn còn Bảng trung gian JoinTable
+    // name: cau hinh ten thuoc tinh
     //cau hinh khi xoa 1 post thi comment cung bi xoa theo
     @OnDelete(action = OnDeleteAction.CASCADE) // CASCADE KHI CHA BI XOA THI CON CUNG XOA THEO
     private Post post; // bai viet thuoc ve thuoc tinh post kieu du lieu post

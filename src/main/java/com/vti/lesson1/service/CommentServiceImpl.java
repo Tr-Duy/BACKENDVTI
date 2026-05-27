@@ -3,17 +3,20 @@ package com.vti.lesson1.service;
 import com.vti.lesson1.dto.CommentDto;
 import com.vti.lesson1.entity.Comment;
 import com.vti.lesson1.form.CommentCreateForm;
+import com.vti.lesson1.form.CommentFilterForm;
 import com.vti.lesson1.form.CommentUpdateForm;
 import com.vti.lesson1.mapper.CommentMappper;
 import com.vti.lesson1.mapper.PostMapper;
 import com.vti.lesson1.repository.CommentRepository;
 import com.vti.lesson1.repository.PostRepository;
+import com.vti.lesson1.specification.CommentSpecification;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
@@ -22,13 +25,14 @@ import java.util.List;
 @AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
     private CommentRepository commentRepository;//truy cap vao commentrepository de lay ra bai viet
-    private ModelMapper modelMapper;
+    private ModelMapper modelMapper;//su dung model mapper phai add oo
     private PostRepository postRepository;//muon kiem tra post ton tai hay khong phai truy cap vao repository cua bai viet
 
     //findlall
     @Override
-    public Page<CommentDto> findAll(Pageable pageable){
-        return commentRepository.findAll(pageable)
+    public Page<CommentDto> findAll(CommentFilterForm form, Pageable pageable){
+        var spec = CommentSpecification.buildSpec(form);//chuyen form sang menh de where
+        return commentRepository.findAll(spec,pageable) //truyen tham so spec vao findall
                 .map(comment -> modelMapper.map(comment, CommentDto.class));
     }
     //findbyid
@@ -38,8 +42,9 @@ public class CommentServiceImpl implements CommentService {
                 .map(comment -> modelMapper.map(comment, CommentDto.class))
                 .orElse(null);
     }
-    @Override
-    public Page<CommentDto> findAllByPostId(Long postId, Pageable pageable) {
+    //lay ra tất cả comment có trong bvieeseieest dựa vào id của bài viết
+    @Override //chuc nang khong co san trong JpaRepository phải bỏ vô Repository
+        public Page<CommentDto> findAllByPostId(Long postId, Pageable pageable) {
         return commentRepository.findAllByPostId(postId, pageable)
                 .map(comment -> modelMapper.map(comment, CommentDto.class));
     }
@@ -75,5 +80,13 @@ public class CommentServiceImpl implements CommentService {
     public void deleteById(long id) {
         commentRepository.deleteById(id);
     }
+
+    //xoa tat ca comment cua 1 bai viet
+    @Override
+    @Transactional//dam bao cac comment bi xoa hoac khong cai nao bi xoa
+    public void deleteAllByPostId(Long postId) {
+        commentRepository.deleteAllByPostId(postId);
+    }
+
 }
 
