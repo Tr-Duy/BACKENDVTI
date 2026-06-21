@@ -5,6 +5,7 @@ import com.vti.lesson1.form.PostCreateForm;
 import com.vti.lesson1.form.PostFilterForm;
 import com.vti.lesson1.form.PostUpdateForm;
 import com.vti.lesson1.service.PostService;
+import com.vti.lesson1.validation.PostIdExists;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,8 +29,8 @@ public class PostController {
         return postService.findAll(form,pageable); //goi ham findAll trong service
     }
     @GetMapping("/api/v1/posts/{id}") // lay du lieu duong dan api , lay id {id} bang bao nhieu
-    public PostDto findById(@PathVariable("id") long id){ // lay con so tren duong dan bang @PathVariable
-
+    public PostDto findById(@PathVariable("id") @PostIdExists long id){ // lay con so tren duong dan bang @PathVariable
+                //@postidExists neu khong co tra ve loi, bat ky noi nao co id deu co the su dung
         return postService.findById(id);
     }
     //create
@@ -40,13 +41,13 @@ public class PostController {
         return postService.create(form);
     }
     @PutMapping("/api/v1/posts/{id}")
-    public PostDto update(@PathVariable("id") long id, @RequestBody @Valid PostUpdateForm form){
+    public PostDto update(@PathVariable("id") @PostIdExists long id, @RequestBody @Valid PostUpdateForm form){
         return postService.update(id,form);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT) // neu xoa k co du lieu se bao ve loi 204
     @DeleteMapping("/api/v1/posts/{id}")
-    public void deleteById(@PathVariable("id") long id){
+    public void deleteById(@PathVariable("id") @PostIdExists long id){
         postService.deleteById(id);
     }
 }
